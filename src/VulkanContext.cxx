@@ -3,6 +3,7 @@
 
 #include "VulkanContext.hpp"
 #include "Validation.hpp"
+#include "Window.hpp"
 
 #include <vector>
 #include <stdexcept>
@@ -33,6 +34,9 @@ VulkanContext::~VulkanContext() {
     }
     
     if (instance != VK_NULL_HANDLE) {
+        if (surface) {
+            vkDestroySurfaceKHR(instance, surface, nullptr);
+        }
         vkDestroyInstance(instance, nullptr);
         std::cout << "Instance cleaning up" << std::endl;
     }
@@ -82,5 +86,8 @@ void VulkanContext::initVulkan() {
         validation->createDebugUtilsMsgr(instance);
     }
 
-    // VkResult err = glfwCreateWindowSurface(instance,)
+    VkResult err = glfwCreateWindowSurface(instance, wnd.getWindow(), nullptr, &surface);
+    if (err) {
+        throw std::runtime_error("Failed to create window surface!");
+    }
 }

@@ -19,5 +19,5 @@ class VulkanContext {
         Window wnd;
         VkInstance instance{};
         std::unique_ptr<Validation> validation;
-        
+        VkSurfaceKHR surface;
 };
