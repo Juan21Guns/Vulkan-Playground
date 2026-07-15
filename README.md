@@ -53,7 +53,7 @@ DEBUG MESSENGER
 
 SURFACE
 -------
-[ ] Create VkSurfaceKHR
+[x] Create VkSurfaceKHR
     - glfwCreateWindowSurface()
 
 
