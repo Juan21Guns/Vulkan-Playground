@@ -10,7 +10,7 @@ add_executable(HelloTriangle
   src/App.cxx
   src/Window.cxx
   src/Validation.cxx
-  include/Window.hpp
+  src/VulkanContext.cxx
 )
 
 target_include_directories(HelloTriangle

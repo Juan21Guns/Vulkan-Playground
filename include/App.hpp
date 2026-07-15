@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "Window.hpp"
-#include "Validation.hpp"
+#include "VulkanContext.hpp"
 
 class App {
     public:
@@ -22,12 +22,9 @@ class App {
         void run();
         
     private:
-        void initVulkan();
         void mainLoop();
         void cleanup();
 
-        std::unique_ptr<Validation> validation;
         std::unique_ptr<Window> window;
-
-        VkInstance instance{};
+        std::unique_ptr<VulkanContext> vk;
 };

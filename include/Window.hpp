@@ -12,4 +12,5 @@ class Window {
 
     private:
         GLFWwindow* window;
+        VkSurfaceKHR surface;
 };
