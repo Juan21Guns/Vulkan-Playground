@@ -59,14 +59,14 @@ SURFACE
 
 PHYSICAL DEVICE SELECTION
 -------------------------
-[ ] Enumerate physical devices
+[x] Enumerate physical devices
     - vkEnumeratePhysicalDevices()
-[ ] For each GPU:
-    [ ] Check graphics queue support
-    [ ] Check presentation queue support
-    [ ] Check required device extensions
-    [ ] Check swapchain support
-[ ] Select suitable GPU
+[x] For each GPU:
+    [x] Check graphics queue support
+    [x] Check presentation queue support
+    [x] Check required device extensions
+    [x] Check swapchain support
+[x] Select suitable GPU
 
 
 QUEUE FAMILIES
@@ -207,11 +207,11 @@ CLEANUP
 [ ] Destroy image views
 [ ] Destroy swapchain
 [ ] Destroy logical device
-[ ] Destroy debug messenger
-[ ] Destroy surface
-[ ] Destroy Vulkan instance
-[ ] Destroy GLFW window
-[ ] glfwTerminate()
+[x] Destroy debug messenger
+[x] Destroy surface
+[x] Destroy Vulkan instance
+[x] Destroy GLFW window
+[x] glfwTerminate()
 
 
 MILESTONES

@@ -25,7 +25,7 @@ void App::run() {
 
     window = std::make_unique<Window>();
     vk = std::make_unique<VulkanContext>(*window);
-    vk->initVulkan();
+    vk->setupDevices();
     mainLoop();
 }
 

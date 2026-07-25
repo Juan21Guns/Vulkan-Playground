@@ -17,29 +17,40 @@ static VkBool32 callbackFunc (
     switch (messageSeverity) {
         case 0x00000001: 
             messageError = "Verbose";
+            break;
         case 0x00000010: 
             messageError = "Info";
+            break;
         case 0x00000100:
             messageError = "Warning";
+            break;
         case 0x00001000: 
             messageError = "Error";
+            break;
     }
 
     const char* messageType;
     switch (messageTypes) {
         case 0x00000001: 
             messageType = "GENERAL";
+            break;
         case 0x00000002: 
             messageType = "VALIDATION";
+            break;
         case 0x00000004:
             messageType = "PERFORMANCE";
+            break;
         case 0x00000008: 
             messageType = "DEVICE ADDRESS BINDING";
+            break;
+        }
+
+    if (messageSeverity > 16) {
+        std::cerr << "Message Severity: " << messageError << std::endl
+            << "Message Type: " << messageType << std::endl
+            << "Callback Data: " << pCallbackData->pMessage << std::endl;
     }
 
-    std::cerr << "Message Severity: " << messageError << std::endl
-              << "Message Type: " << messageType << std::endl
-              << "Callback Data: " << pCallbackData->pMessage << std::endl;
     return VK_FALSE;
 }
 
