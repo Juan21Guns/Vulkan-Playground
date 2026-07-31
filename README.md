@@ -71,18 +71,18 @@ PHYSICAL DEVICE SELECTION
 
 QUEUE FAMILIES
 --------------
-[ ] Find graphics queue family
-[ ] Find presentation queue family
+[x] Find graphics queue family
+[x] Find presentation queue family
     - vkGetPhysicalDeviceQueueFamilyProperties()
     - vkGetPhysicalDeviceSurfaceSupportKHR()
 
 
 LOGICAL DEVICE
 --------------
-[ ] Create queue create infos
-[ ] Enable device extensions
+[x] Create queue create infos
+[x] Enable device extensions
     - VK_KHR_SWAPCHAIN_EXTENSION_NAME
-[ ] vkCreateDevice()
+[x] vkCreateDevice()
 [ ] Retrieve graphics queue
     - vkGetDeviceQueue()
 [ ] Retrieve presentation queue

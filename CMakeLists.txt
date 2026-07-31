@@ -11,6 +11,7 @@ add_executable(HelloTriangle
   src/Window.cxx
   src/Validation.cxx
   src/VulkanContext.cxx
+  src/Device.cxx
 )
 
 target_include_directories(HelloTriangle

@@ -8,24 +8,19 @@
 
 #include "Window.hpp"
 #include "Validation.hpp"
+#include "Device.hpp"
 
 class VulkanContext { 
     public: 
         VulkanContext(Window& window);
         ~VulkanContext();
 
-        bool setupDevices();
-
     private:
-        Window wnd;
+        Window& wnd;
         VkInstance instance{};
+    
         std::unique_ptr<Validation> validation;
-        VkSurfaceKHR surface;
-        uint32_t graphicsQueueFamilyIndex;
-        VkQueue pQueue;
-        VkDevice device;
-        VkPhysicalDevice vkpd;
+        std::unique_ptr<Device> device;
 
-        bool getPhysicalDeviceSupport(VkPhysicalDevice pd, uint32_t i);
-        bool checkDeviceExtensions(VkPhysicalDevice physicalDevice, const std::vector<const char*>& extensions);
+        VkSurfaceKHR surface;
 };
