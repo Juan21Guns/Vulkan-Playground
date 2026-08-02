@@ -5,11 +5,15 @@
 #include <iostream>
 #include <vector>
 #include <stdexcept>
+#include <optional>
+#include <set>
 
-Device::Device(VkSurfaceKHR* sf, VkInstance* is) : surface(sf), instance(is) {
+Device::Device(VkSurfaceKHR sf, VkInstance is) : surface(sf), instance(is) {
     if (!instance || !surface) {
         throw std::runtime_error("instance or surface not created!");
     }
+
+
 }
 
 Device::~Device() {
@@ -25,60 +29,84 @@ bool Device::setupDevice() {
 
     uint32_t deviceCount = 0; 
 
-    vkEnumeratePhysicalDevices(*instance, &deviceCount, nullptr);
+    vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
 
     if (deviceCount == 0) {
         throw std::runtime_error("No devices found!");
     }
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
-    VkResult err = vkEnumeratePhysicalDevices(*instance, &deviceCount, devices.data()); 
+    VkResult err = vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data()); 
 
     if (err < 0) {
         throw std::runtime_error("Failed to gather physical devices!");
     }
 
     for (auto const& pd : devices) {
+        if (!checkDeviceExtensions(pd, requiredDeviceExtensions)) {
+            continue;
+        }
+
+        queueStruct tempStruct{};
         uint32_t queueCount = 0;
-        uint32_t qfCount = 0;
 
         vkGetPhysicalDeviceQueueFamilyProperties(pd, &queueCount, nullptr);
         std::vector<VkQueueFamilyProperties> qProperties(queueCount);
         vkGetPhysicalDeviceQueueFamilyProperties(pd, &queueCount, qProperties.data());
 
-        for (auto const& qp : qProperties) {
-            // //001, 010, 100   111 
-            // // 111
-            // bool qCompare = (qp.queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT)) == (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT);
-            bool qCompare = qp.queueFlags & VK_QUEUE_GRAPHICS_BIT;
-            if (qCompare) {
-                if (checkDeviceExtensions(pd, requiredDeviceExtensions) && getPhysicalDeviceSupport(pd, qfCount)) {
-                    if (createDevice(qfCount, pd, requiredDeviceExtensions)) {
-                        return true;
-                    }
-                };
+        for (uint32_t i = 0; i < qProperties.size(); i++) 
+        {
+            //SELECTING GRAPHICS QUEUE
+            if ((!tempStruct.graphicsQueue.has_value()) && (qProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
+                tempStruct.graphicsQueue = i;
             }
-            
-            qfCount++;
+
+            // SELECTING PRESENTATION QUEUE
+            if ((!tempStruct.presentationQueue.has_value()) && getPhysicalDeviceSupport(pd, i)) {
+                tempStruct.presentationQueue = i;
+            }
+
+            if (tempStruct.isComplete()) {
+                break;
+            }
+        }
+
+        if (tempStruct.isComplete()) {
+            if (createDevice(tempStruct, pd, requiredDeviceExtensions)) {
+                queueIndiceStruct = tempStruct;
+                return true;
+            }
         }
     }
 
     return false;
 }
 
-bool Device::createDevice(uint32_t& qfCount, const VkPhysicalDevice& pd, std::vector<const char*>& requiredDeviceExtensions) {
+//THIS IS LOGICAL DEVICE
+bool Device::createDevice(queueStruct qfCount, const VkPhysicalDevice& pd, std::vector<const char*>& requiredDeviceExtensions) {
     float queuePriority = 1.0f;
 
-    VkDeviceQueueCreateInfo dqci{};
-    dqci.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    dqci.queueFamilyIndex = qfCount;
-    dqci.queueCount = 1;
-    dqci.pQueuePriorities = &queuePriority;
+    std::set<uint32_t> uniqueQueues = {
+        qfCount.graphicsQueue.value(),
+        qfCount.presentationQueue.value()
+    }; 
+
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+
+    for (const auto uq : uniqueQueues) {
+        VkDeviceQueueCreateInfo dqci{};
+        dqci.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        dqci.queueFamilyIndex = uq;
+        dqci.queueCount = 1;
+        dqci.pQueuePriorities = &queuePriority;
+
+        queueCreateInfos.push_back(dqci);
+    }
 
     VkDeviceCreateInfo dci{};
     dci.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    dci.queueCreateInfoCount = 1;
-    dci.pQueueCreateInfos = &dqci;
+    dci.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+    dci.pQueueCreateInfos = queueCreateInfos.data();
     dci.enabledExtensionCount = static_cast<uint32_t>(requiredDeviceExtensions.size());
     dci.ppEnabledExtensionNames = requiredDeviceExtensions.data();
 
@@ -87,9 +115,11 @@ bool Device::createDevice(uint32_t& qfCount, const VkPhysicalDevice& pd, std::ve
         throw std::runtime_error("failed to create device!");
     } else {
         std::cout << "created device!" << std::endl;  
-        graphicsQueueFamilyIndex = qfCount;
         vkpd = pd;
-        vkGetDeviceQueue(device, graphicsQueueFamilyIndex, 0, &pQueue);
+        
+        vkGetDeviceQueue(device, qfCount.graphicsQueue.value(), 0, &graphicsQueue);
+        vkGetDeviceQueue(device, qfCount.presentationQueue.value(), 0, &presentationQueue);
+
         return true; 
     }
 }
@@ -97,7 +127,7 @@ bool Device::createDevice(uint32_t& qfCount, const VkPhysicalDevice& pd, std::ve
 bool Device::getPhysicalDeviceSupport(VkPhysicalDevice pd, uint32_t i) {
     VkBool32 pSupported = VK_FALSE;
 
-    VkResult getSupport = vkGetPhysicalDeviceSurfaceSupportKHR(pd, i, *surface, &pSupported);
+    VkResult getSupport = vkGetPhysicalDeviceSurfaceSupportKHR(pd, i, surface, &pSupported);
 
     if (getSupport != VK_SUCCESS) {
         return false;
@@ -128,3 +158,15 @@ bool Device::checkDeviceExtensions(VkPhysicalDevice physicalDevice, const std::v
 
     return true;
 }
+
+VkPhysicalDevice Device::getPhysDevice() {
+    return vkpd;
+}
+
+VkDevice Device::getDevice() {
+    return device;
+}
+
+queueStruct Device::getQueueIndices() {
+    return queueIndiceStruct;
+};

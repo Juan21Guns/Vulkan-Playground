@@ -34,6 +34,16 @@ Window::~Window() {
     }
 }
 
+VkExtent2D Window::getFrameBufferSize() {
+    int width = 0, height = 0;
+    glfwGetFramebufferSize(window, &width, &height);
+
+    return {
+        static_cast<uint32_t>(width),
+        static_cast<uint32_t>(height)
+    };
+}
+
 GLFWwindow* Window::getWindow() const {
     return window;
 }

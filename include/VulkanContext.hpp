@@ -9,6 +9,7 @@
 #include "Window.hpp"
 #include "Validation.hpp"
 #include "Device.hpp"
+#include "Swapchain.hpp"
 
 class VulkanContext { 
     public: 
@@ -21,6 +22,7 @@ class VulkanContext {
     
         std::unique_ptr<Validation> validation;
         std::unique_ptr<Device> device;
+        std::unique_ptr<Swapchain> swapchain;
 
         VkSurfaceKHR surface;
 };

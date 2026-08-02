@@ -73,13 +73,19 @@ VulkanContext::VulkanContext(Window& window) : wnd(window)
         throw std::runtime_error("Failed to create window surface!");
     }
 
-    device = std::make_unique<Device>(&surface, &instance);
+    device = std::make_unique<Device>(surface, instance);
     device->setupDevice();
+
+    swapchain = std::make_unique<Swapchain>(device->getDevice(), device->getQueueIndices(), device->getPhysDevice(), surface, wnd);
 }
 
 VulkanContext::~VulkanContext() {
     //cleanup in reverse order
     std::cout << "Vulkan Context cleaning up" << std::endl;
+
+    if (swapchain) {
+        swapchain.reset();
+    }
 
     if (device) {
         device.reset();

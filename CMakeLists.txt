@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.23)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 project(VulkanPlayground)
 
 find_package(glfw3 REQUIRED)
@@ -12,6 +16,7 @@ add_executable(HelloTriangle
   src/Validation.cxx
   src/VulkanContext.cxx
   src/Device.cxx
+  src/Swapchain.cxx
 )
 
 target_include_directories(HelloTriangle

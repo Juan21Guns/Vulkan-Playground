@@ -9,6 +9,7 @@ class Window {
         ~Window();
 
         GLFWwindow* getWindow() const;
+        VkExtent2D getFrameBufferSize();
 
     private:
         GLFWwindow* window;

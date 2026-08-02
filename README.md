@@ -83,30 +83,30 @@ LOGICAL DEVICE
 [x] Enable device extensions
     - VK_KHR_SWAPCHAIN_EXTENSION_NAME
 [x] vkCreateDevice()
-[ ] Retrieve graphics queue
+[x] Retrieve graphics queue
     - vkGetDeviceQueue()
-[ ] Retrieve presentation queue
+[x] Retrieve presentation queue
     - vkGetDeviceQueue()
 
 
 SWAPCHAIN SUPPORT
 -----------------
-[ ] Query surface capabilities
+[x] Query surface capabilities
     - vkGetPhysicalDeviceSurfaceCapabilitiesKHR()
-[ ] Query surface formats
+[x] Query surface formats
     - vkGetPhysicalDeviceSurfaceFormatsKHR()
-[ ] Query present modes
+[x] Query present modes
     - vkGetPhysicalDeviceSurfacePresentModesKHR()
 
 
 SWAPCHAIN
 ---------
-[ ] Choose surface format
-[ ] Choose present mode
-[ ] Choose swap extent
-[ ] Create VkSwapchainKHR
+[x] Choose surface format
+[x] Choose present mode
+[x] Choose swap extent
+[x] Create VkSwapchainKHR
     - vkCreateSwapchainKHR()
-[ ] Retrieve swapchain images
+[x] Retrieve swapchain images
     - vkGetSwapchainImagesKHR()
 
 
@@ -205,8 +205,8 @@ CLEANUP
 [ ] Destroy pipeline layout
 [ ] Destroy render pass
 [ ] Destroy image views
-[ ] Destroy swapchain
-[ ] Destroy logical device
+[x] Destroy swapchain
+[x] Destroy logical device
 [x] Destroy debug messenger
 [x] Destroy surface
 [x] Destroy Vulkan instance
@@ -220,10 +220,10 @@ MILESTONES
 [x] Vulkan instance created
 [x] Validation layers working
 
-[ ] Physical device selected
-[ ] Logical device created
+[x] Physical device selected
+[x] Logical device created
 
-[ ] Swapchain created
+[x] Swapchain created
 [ ] Image views created
 
 [ ] Graphics pipeline created
