@@ -14,6 +14,7 @@ class Swapchain {
         
         void createSwapchain();
         void getSwapchainImages();
+        void createImageViews();
 
     private:
         bool isSwapchainAccessible();
@@ -26,11 +27,12 @@ class Swapchain {
         queueStruct queueIndices;
 
         VkSurfaceKHR surface;
-        
         VkSurfaceCapabilitiesKHR pSurfaceCapabilities;
+
         std::vector<VkSurfaceFormatKHR> pSurfaceFormats;
         std::vector<VkPresentModeKHR> pPresentModes;
         std::vector<VkImage> pSwapchainImages;
+        std::vector<VkImageView> pImageViews;
 
         VkSurfaceFormatKHR surfaceFormat{};
         VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;

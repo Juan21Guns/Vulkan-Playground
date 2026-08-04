@@ -20,11 +20,16 @@ Swapchain::Swapchain(VkDevice device, queueStruct queueIndices, VkPhysicalDevice
     isSwapchainAccessible();
     createSwapchain();
     getSwapchainImages();
+    createImageViews();
 }
 
 Swapchain::~Swapchain() {
     if (pSwapchain) {
         std::cout << "cleaning up swapchain" << std::endl;
+        for (int i = 0; i < pImageViews.size(); i++) {
+            vkDestroyImageView(device, pImageViews[i], nullptr);
+        }
+
         vkDestroySwapchainKHR(device, pSwapchain, nullptr);
     }
 }
@@ -211,5 +216,39 @@ void Swapchain::getSwapchainImages() {
 
     if (err != VK_SUCCESS) {
         throw std::runtime_error("failed to get swapchain images!");
+    }
+}
+
+void Swapchain::createImageViews() {
+    if (!surfaceFormat.format) {
+        throw std::runtime_error("No chosen format!");
+    }
+
+    pImageViews.resize(pSwapchainImages.size());
+
+    for (int i = 0; i < pSwapchainImages.size(); i++) {
+        VkImageViewCreateInfo ivci{};
+        ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        ivci.pNext = nullptr;
+        ivci.flags = 0; 
+        ivci.viewType = VK_IMAGE_VIEW_TYPE_2D; 
+        ivci.format = surfaceFormat.format;
+       
+        ivci.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+        ivci.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+        ivci.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+        ivci.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+       
+        ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        ivci.subresourceRange.baseMipLevel = 0;
+        ivci.subresourceRange.levelCount = 1;
+        ivci.subresourceRange.baseArrayLayer = 0;
+        ivci.subresourceRange.layerCount = 1;
+       
+        ivci.image = pSwapchainImages[i]; 
+
+        if (vkCreateImageView(device, &ivci, nullptr, &pImageViews[i]) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to create image view!");
+        }
     }
 }
