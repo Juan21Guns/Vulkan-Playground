@@ -112,7 +112,7 @@ SWAPCHAIN
 
 IMAGE VIEWS
 -----------
-[ ] Create image view for each swapchain image
+[x] Create image view for each swapchain image
     - vkCreateImageView()
 
 
@@ -151,10 +151,91 @@ FRAMEBUFFERS
     - vkCreateFramebuffer()
 
 
-COMMAND POOL
-------------
-[ ] Create command pool
-    - vkCreateCommandPool()
+Command Infrastructure
+ x Identify graphics queue family
+ x Create command pool
+ Allocate primary command buffers
+ Decide number of frames in flight
+ Associate command buffers with frames in flight
+Synchronization
+ Create image-available semaphores
+ Create render-finished semaphores
+ Create in-flight fences
+ Wait for frame fence before reusing frame resources
+ Reset fence before submitting frame
+ Use synchronization2 for queue submission/barriers
+Begin Frame
+ Acquire swapchain image
+ Handle VK_ERROR_OUT_OF_DATE_KHR
+ Handle VK_SUBOPTIMAL_KHR
+ Reset/reuse the appropriate command buffer
+ Begin command buffer recording
+Swapchain Image → Rendering
+ Transition swapchain image from PRESENT_SRC_KHR
+ Transition to COLOR_ATTACHMENT_OPTIMAL
+ Use an image memory barrier
+ Set appropriate source/destination pipeline stages
+ Set appropriate source/destination access masks
+Dynamic Rendering Setup
+ Enable dynamic rendering device feature
+ Create VkRenderingAttachmentInfo
+ Set swapchain image view
+ Set COLOR_ATTACHMENT_OPTIMAL layout
+ Choose color loadOp
+ Choose color storeOp
+ Set clear color if using CLEAR
+ Set resolve mode to NONE unless using MSAA
+ Create VkRenderingInfo
+ Set render area
+ Set layer count
+ Set color attachment count
+ Provide color attachments
+Begin Rendering
+ Begin dynamic rendering
+ Bind graphics pipeline
+ Set viewport
+ Set scissor
+ Bind vertex/index buffers when applicable
+ Bind descriptor sets when applicable
+ Push constants when applicable
+ Issue draw commands
+End Rendering
+ End dynamic rendering
+Rendering → Swapchain Present
+ Transition swapchain image from COLOR_ATTACHMENT_OPTIMAL
+ Transition to PRESENT_SRC_KHR
+ Use an image memory barrier
+ Set appropriate source/destination pipeline stages
+ Set appropriate source/destination access masks
+ End command buffer recording
+Queue Submission
+ Wait for image-available semaphore
+ Submit command buffer
+ Signal render-finished semaphore
+ Signal in-flight fence
+Presentation
+ Present swapchain image
+ Wait on render-finished semaphore
+ Handle VK_ERROR_OUT_OF_DATE_KHR
+ Handle VK_SUBOPTIMAL_KHR
+Swapchain Recreation
+ Wait for GPU/device as appropriate
+ Destroy old swapchain image views
+ Recreate swapchain
+ Retrieve new swapchain images
+ Recreate image views
+ Update extent
+ Update viewport/scissor as needed
+ Update pipeline/rendering formats if necessary
+ Reset/reinitialize swapchain-dependent resources
+Explicitly Not Needed with Dynamic Rendering
+ Create VkRenderPass
+ Create VkFramebuffer
+ Define subpasses
+ Define render-pass dependencies
+ vkCmdBeginRenderPass
+ vkCmdEndRenderPass
+ Render-pass attachment descriptions
 
 
 COMMAND BUFFERS
@@ -204,7 +285,7 @@ CLEANUP
 [ ] Destroy graphics pipeline
 [ ] Destroy pipeline layout
 [ ] Destroy render pass
-[ ] Destroy image views
+[x] Destroy image views
 [x] Destroy swapchain
 [x] Destroy logical device
 [x] Destroy debug messenger

@@ -24,6 +24,8 @@ class Device {
         VkDevice getDevice();
         VkPhysicalDevice getPhysDevice();
         queueStruct getQueueIndices();
+        uint32_t getGraphicsQueueIndex();
+        uint32_t getPresentQueueIndex();
     
     private:
         bool createDevice(queueStruct qfCount, const VkPhysicalDevice& pd, std::vector<const char*>& requiredDeviceExtensions);

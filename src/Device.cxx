@@ -170,3 +170,19 @@ VkDevice Device::getDevice() {
 queueStruct Device::getQueueIndices() {
     return queueIndiceStruct;
 };
+
+uint32_t Device::getGraphicsQueueIndex() {
+    if (queueIndiceStruct.graphicsQueue.has_value()) {
+        return queueIndiceStruct.graphicsQueue.value();
+    } 
+
+    throw std::runtime_error("no queue index found!");
+}
+
+uint32_t Device::getPresentQueueIndex() {
+    if (queueIndiceStruct.presentationQueue.has_value()) {
+        return queueIndiceStruct.presentationQueue.value();
+    }
+
+    throw std::runtime_error("no queue index found!");
+}
